@@ -1,35 +1,21 @@
-const nodemailer = require('nodemailer');
+import { Resend } from "resend";
 
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: process.env.SMTP_SECURE === "true",
-  auth: {
-    user: process.env.EMAIL_USER, // Usa variables de entorno seguras
-    pass: process.env.EMAIL_PASS
-  },
-  tls: {
-    rejectUnauthorized: false
-  }
-});
-
-async function enviarCorreo({ to, subject, html, attachments = []}) {
+export async function enviarCorreo({ to, subject, html }) {
   try {
-    const info = await transporter.sendMail({
-      from: '"WedInvite" <no-reply@wedinvite.com>',
+    const { error } = await resend.emails.send({
+      from: "WedInvite <no-reply@wedinvite.com>",
       to,
       subject,
       html,
       attachments // Se incluye aquí el adjunto si es necesario
     });
 
-    return { exito: true, mensajeId: info.messageId };
-  } catch (error) {
-    console.error("Error al enviar correo:", error);
-    return { exito: false, error };
+    if (error) throw error;
+    console.log("📧 Correo enviado");
+  } catch (err) {
+    console.error("❌ Error al enviar correo:", err);
+    throw err;
   }
 }
-
-
-module.exports = {enviarCorreo};
