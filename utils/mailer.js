@@ -7,7 +7,7 @@ console.log("🔥 USANDO RESEND");
 export async function enviarCorreo({ to, subject, html,attachments = [] }) {
   try {
     const { error } = await resend.emails.send({
-      from: "WedInvite <no-reply@wedinvite.com>",
+      from: "WedInvite <onboarding@resend.dev>",
       to,
       subject,
       html,
