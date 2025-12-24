@@ -42,7 +42,7 @@ router.get('/evento/:codigo', async (req, res) => {
   }
 });
 
-// Ruta para registrar un nuevo regalo (con carga de imagen)
+/*/ Ruta para registrar un nuevo regalo (con carga de imagen)
 router.post('/', upload.single('imagen'),authJWT, async (req, res) => {
   try {
       const { titulo, enlace } = req.body;
@@ -63,6 +63,42 @@ router.post('/', upload.single('imagen'),authJWT, async (req, res) => {
   } catch (error) {
       console.error('Error al registrar el regalo:', error);
       res.status(500).json({ error: 'Error al registrar el regalo' });
+  }
+});*/
+
+// Ruta para registrar un nuevo regalo (SIN carga de imagen)
+router.post('/', authJWT, async (req, res) => {
+  try {
+    const { titulo, enlace, codigo, valor, reservado_por } = req.body;
+
+    // Validación mínima
+    if (!titulo || !enlace || !codigo || !valor || !reservado_por) {
+      return res.status(400).json({ error: 'Datos incompletos' });
+    }
+
+    // Buscar evento por código
+    const evento = await Evento.findOne({
+      where: { codigo }
+    });
+
+    if (!evento) {
+      return res.status(404).json({ error: 'Evento no encontrado' });
+    }
+
+    const nuevoRegalo = await Regalo.create({
+      titulo,
+      enlace,
+      evento_id: evento.id,
+      estado: 'Disponible',
+      valor,
+      reservado_por
+    });
+
+    return res.status(201).json(nuevoRegalo);
+
+  } catch (error) {
+    console.error('❌ Error al registrar el regalo:', error);
+    return res.status(500).json({ error: 'Error al registrar el regalo' });
   }
 });
 
