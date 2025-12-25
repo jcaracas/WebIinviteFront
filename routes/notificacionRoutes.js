@@ -13,4 +13,31 @@ router.get("/:usuario_id", async (req, res) => {
   }
 });
 
+router.post("/", async (req, res) => {
+  try {
+    const { mensaje, evento_id } = req.body;
+
+    if (!mensaje || !evento_id) {
+      return res.status(400).json({
+        mensaje: "Mensaje y evento_id son obligatorios"
+      });
+    }
+
+    const notificacion = await Notificacion.create({
+      mensaje,
+      evento_id
+    });
+
+    res.status(201).json({
+      mensaje: "Notificación registrada",
+      notificacion
+    });
+
+  } catch (error) {
+    console.error("Error al crear notificación:", error);
+    res.status(500).json({
+      mensaje: "Error interno del servidor"
+    });
+  }
+});
 module.exports = router;
