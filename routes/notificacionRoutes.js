@@ -14,6 +14,7 @@ router.get("/:usuario_id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+  const usuario_id = "dbe5b50f-7722-4178-b297-9ecdda2f9281";
   try {
     const { mensaje, evento_id } = req.body;
 
@@ -24,6 +25,7 @@ router.post("/", async (req, res) => {
     }
 
     const notificacion = await Notificacion.create({
+      usuario_id,
       mensaje,
       evento_id
     });
