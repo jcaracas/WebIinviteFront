@@ -6,9 +6,9 @@ const Evento = require("../models/Event");
 const router = express.Router();
 
 // 🔹 Obtener notificaciones de un usuario
-router.get("/:usuario_id", async (req, res) => {
+router.get("/:codigo", async (req, res) => {
   try {
-    const notificaciones = await Notificacion.findAll({ where: { usuario_id: req.params.usuario_id } });
+    const notificaciones = await Notificacion.findAll({ where: { codigo: req.params.codigo } });
     res.json(notificaciones);
   } catch (error) {
     res.status(500).json({ error: error.message });
