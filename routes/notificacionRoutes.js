@@ -1,5 +1,7 @@
 const express = require("express");
 const Notificacion = require("../models/Notificacion");
+const Evento = require("../models/Event");
+
 
 const router = express.Router();
 
@@ -14,9 +16,15 @@ router.get("/:usuario_id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const usuario_id = "dbe5b50f-7722-4178-b297-9ecdda2f9281";
+  const usuario_id = "dbe5b50f-7722-4178-b297-9ecdda2f9281";// ID de usuario simulado
   try {
     const { mensaje, evento_id } = req.body;
+    const codigo= evento_id;
+    // Buscar el evento
+    const evento = await Evento.findOne({ where: { codigo } });
+    if (!evento) {
+      return res.status(404).json({ mensaje: "Evento no encontrado." });
+    }
 
     if (!mensaje || !evento_id) {
       return res.status(400).json({
@@ -27,7 +35,7 @@ router.post("/", async (req, res) => {
     const notificacion = await Notificacion.create({
       usuario_id,
       mensaje,
-      evento_id
+      evento_id: evento.id
     });
 
     res.status(201).json({
@@ -42,4 +50,5 @@ router.post("/", async (req, res) => {
     });
   }
 });
+
 module.exports = router;
