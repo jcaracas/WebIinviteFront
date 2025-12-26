@@ -8,7 +8,10 @@ const router = express.Router();
 // 🔹 Obtener notificaciones de un usuario
 router.get("/:codigo", async (req, res) => {
   try {
-    const notificaciones = await Notificacion.findAll({ where: { codigo: req.params.codigo } });
+    const codigo = req.params.codigo;
+    const evento = await Evento.findOne({ where: { codigo } });
+
+    const notificaciones = await Notificacion.findAll({ where: { evento_id: evento.id } });
     res.json(notificaciones);
   } catch (error) {
     res.status(500).json({ error: error.message });
